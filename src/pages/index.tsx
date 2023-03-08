@@ -15,8 +15,20 @@ export default function Home() {
       </Head>
       <main className='mx-auto'>
         <div>
-          <h1 className="text-2xl">Hello World!</h1>
-          <p>Turqoise Cobra</p>
+          <h1 className="text-2xl"> TO DO APP </h1>
+          <p>Type and press the button to add the task</p>
+          <input  type="text"> type here </input>
+          <li>
+            <ul>
+              todo-1
+            </ul>
+            <ul>
+              todo-2
+            </ul>
+            <ul>
+              todo-3
+            </ul>
+          </li>
         </div>
       </main>
     </>
