@@ -1,8 +1,8 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
+import Head from "next/head";
+import Image from "next/image";
+import { Inter } from "next/font/google";
 
-const inter = Inter({ subsets: ['latin'] })
+const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   return (
@@ -13,24 +13,18 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <main className='mx-auto'>
+      <main className="mx-auto">
         <div>
           <h1 className="text-2xl"> TO DO APP </h1>
           <p>Type and press the button to add the task</p>
-          <input  type="text"> type here </input>
+          <input type="text" />
           <li>
-            <ul>
-              todo-1
-            </ul>
-            <ul>
-              todo-2
-            </ul>
-            <ul>
-              todo-3
-            </ul>
+            <ul>todo-1</ul>
+            <ul>todo-2</ul>
+            <ul>todo-3</ul>
           </li>
         </div>
       </main>
     </>
-  )
+  );
 }
