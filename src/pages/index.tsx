@@ -62,7 +62,12 @@ export default function Home() {
               ) : (
                 <section className="flex flex-col space-y-5">
                   {task.map((task: string, idx: number) => (
-                    <TaskCard task={task} idx={idx} />
+                    <TaskCard
+                      task={task}
+                      idx={idx}
+                      setComplete={setComplete}
+                      complete={complete}
+                    />
                   ))}
                 </section>
               )}
