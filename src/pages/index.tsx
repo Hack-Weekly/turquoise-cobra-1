@@ -10,6 +10,7 @@ export default function Home() {
   const [newTask, setNewTask] = useState("");
   const [complete, setComplete] = useState(false);
 
+  // add new task
   const addTask = () => {
     if (task) {
       let num = task.length + 1;
@@ -20,6 +21,18 @@ export default function Home() {
     }
   };
 
+  // mark task complete
+  const markComplete = (id: number) => {
+    let markTask = task.map((task: any) => {
+      if (task.id === id) {
+        return { ...task, status: !task.status };
+      }
+      return task;
+    });
+    setTask(markTask);
+  };
+
+  // handles form input
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     setNewTask(e.target.value);
@@ -65,9 +78,7 @@ export default function Home() {
                     <TaskCard
                       task={task}
                       idx={idx}
-                      setComplete={setComplete}
-                      complete={complete}
-                      setTask={setTask}
+                      markComplete={markComplete}
                     />
                   ))}
                 </section>
