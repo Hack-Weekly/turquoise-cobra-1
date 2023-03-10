@@ -67,6 +67,7 @@ export default function Home() {
                       idx={idx}
                       setComplete={setComplete}
                       complete={complete}
+                      setTask={setTask}
                     />
                   ))}
                 </section>
