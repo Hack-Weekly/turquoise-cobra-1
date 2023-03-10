@@ -8,11 +8,12 @@ const inter = Inter({ subsets: ["latin"] });
 export default function Home() {
   const [task, setTask] = useState<any>([]);
   const [newTask, setNewTask] = useState("");
+  const [complete, setComplete] = useState(false);
 
   const addTask = () => {
     if (task) {
       let num = task.length + 1;
-      let newEntry = { id: num, title: newTask };
+      let newEntry = { id: num, title: newTask, status: complete };
       setTask([...task, newEntry]);
       console.log(task);
       setNewTask("");
