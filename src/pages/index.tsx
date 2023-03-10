@@ -40,6 +40,7 @@ export default function Home() {
                 <input
                   type="text"
                   value={newTask}
+                  maxLength={80}
                   placeholder="Enter tasks here..."
                   onChange={handleInputChange}
                   className="flex-1 w-full text-lg px-3 py-2 rounded-lg"
