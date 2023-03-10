@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import { nanoid } from 'nanoid';
 import { Task } from "@/features/types";
 
@@ -29,55 +30,62 @@ export const getTags = (state: TodoState, exceptTask: Task | null = null) => {
 }
 
 // TODO: should have used immer
-export const useTodoStore = create<TodoState>()((set) => ({
-  tasks: {},
-  addTask: (tags = [], id = nanoid()) => set((state) => ({
-    tasks: {
-      ...state.tasks,
-      [id]: {
-        id,
-        name: "",
-        notes: "",
-        tags,
-        createdAt: (new Date()).toString(),
-        done: false
-      }
+export const useTodoStore = create<TodoState>()(
+  persist(
+    (set) => ({
+      tasks: {},
+      addTask: (tags = [], id = nanoid()) => set((state) => ({
+        tasks: {
+          ...state.tasks,
+          [id]: {
+            id,
+            name: "",
+            notes: "",
+            tags,
+            createdAt: (new Date()).toString(),
+            done: false
+          }
+        }
+      })),
+      addTag: (id, tag) => set((state) => ({
+        tasks: {
+          ...state.tasks,
+          [id]: {
+            ...state.tasks[id],
+            tags: state.tasks[id].tags.indexOf(tag) === -1 ? [...state.tasks[id].tags, tag] : state.tasks[id].tags
+          }
+        }
+      })),
+      removeTag: (id, tag) => set((state) => ({
+        tasks: {
+          ...state.tasks,
+          [id]: {
+            ...state.tasks[id],
+            tags: state.tasks[id].tags.filter((item) => item !== tag)
+          }
+        }
+      })),
+      editName: (id: string, name: string) => set((state) => ({
+        tasks: {
+          ...state.tasks,
+          [id]: { ...state.tasks[id], name }
+        }
+      })),
+      editNotes: (id: string, notes: string) => set((state) => ({
+        tasks: {
+          ...state.tasks,
+          [id]: { ...state.tasks[id], notes }
+        }
+      })),
+      markCompletion: (id: string, done: boolean) => set((state) => ({
+        tasks: {
+          ...state.tasks,
+          [id]: { ...state.tasks[id], done }
+        }
+      })),
+    }),
+    {
+      name: 'cobra-tasks'
     }
-  })),
-  addTag: (id, tag) => set((state) => ({
-    tasks: {
-      ...state.tasks,
-      [id]: {
-        ...state.tasks[id],
-        tags: state.tasks[id].tags.indexOf(tag) === -1 ? [...state.tasks[id].tags, tag] : state.tasks[id].tags
-      }
-    }
-  })),
-  removeTag: (id, tag) => set((state) => ({
-    tasks: {
-      ...state.tasks,
-      [id]: {
-        ...state.tasks[id],
-        tags: state.tasks[id].tags.filter((item) => item !== tag)
-      }
-    }
-  })),
-  editName: (id: string, name: string) => set((state) => ({
-    tasks: {
-      ...state.tasks,
-      [id]: { ...state.tasks[id], name }
-    }
-  })),
-  editNotes: (id: string, notes: string) => set((state) => ({
-    tasks: {
-      ...state.tasks,
-      [id]: { ...state.tasks[id], notes }
-    }
-  })),
-  markCompletion: (id: string, done: boolean) => set((state) => ({
-    tasks: {
-      ...state.tasks,
-      [id]: { ...state.tasks[id], done }
-    }
-  })),
-}));
+  )
+);

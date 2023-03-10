@@ -37,7 +37,7 @@ export function TaskInput(props: ITaskCard) {
     setFocus(false);
   };
 
-  const handleFocus = () => {
+  const handleFocus = (e: any) => {
     setFocus(true);
   };
 
@@ -51,7 +51,6 @@ export function TaskInput(props: ITaskCard) {
             id="task-id"
             checked={task.done}
             onChange={handleCompletionChange}
-            onFocus={handleFocus}
           />
         </label>
         <label htmlFor="task-id" className="inline-block">

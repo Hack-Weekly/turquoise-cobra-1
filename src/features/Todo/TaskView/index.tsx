@@ -33,7 +33,7 @@ export function TaskView() {
   return (
     <div className="max-w-[800px] mx-auto w-full justify-center">
       <div className="h-fit mx-auto">
-        <h1 className="text-2xl text-center my-10"> TO DO APP </h1>
+        <h1 className="text-2xl text-center my-10">Cobra Tasks</h1>
         <div className="mb-4">
           <button
             onClick={addTaskWithSelectedTag}
