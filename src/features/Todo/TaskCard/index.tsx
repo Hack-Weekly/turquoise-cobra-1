@@ -7,7 +7,7 @@ interface Props {
   markComplete: any;
 }
 
-function TaskCard({ task, idx, markComplete }: Props) {
+export function TaskCard({ task, idx, markComplete }: Props) {
   return (
     <div
       key={idx}
