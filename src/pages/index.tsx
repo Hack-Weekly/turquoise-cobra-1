@@ -34,7 +34,7 @@ export default function Home() {
       <main className="mx-auto w-full h-screen">
         <div className="w-full flex justify-center">
           <div>
-            <div className="w-96">
+            <div className="w-96 h-fit mx-auto">
               <h1 className="text-2xl text-center my-10"> TO DO APP </h1>
               <div className=" flex flex-col space-y-6">
                 <input
