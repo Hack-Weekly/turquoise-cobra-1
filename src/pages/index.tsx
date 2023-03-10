@@ -1,10 +1,14 @@
 import Head from "next/head";
 import Image from "next/image";
 import { Inter } from "next/font/google";
+import TaskCard from "@/components/taskCard";
+import TaskForm from "@/components/taskForm";
+import { useState } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
+  const [task, setTask] = useState<any>();
   return (
     <>
       <Head>
@@ -16,8 +20,7 @@ export default function Home() {
       <main className="mx-auto">
         <div>
           <h1 className="text-2xl"> TO DO APP </h1>
-          <p>Type and press the button to add the task</p>
-          <input type="text" />
+          <TaskForm setTask={setTask} />
           <li>
             <ul>todo-1</ul>
             <ul>todo-2</ul>
