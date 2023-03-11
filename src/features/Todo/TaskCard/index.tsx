@@ -1,6 +1,8 @@
 import React, {useState} from "react";
+import colors from "tailwindcss/colors";
 import ClickAwayListener from 'react-click-away-listener';
-import { GoTag, GoX } from "react-icons/go";
+import { motion } from 'framer-motion';
+import { GoTag } from "react-icons/go";
 import { RiCloseCircleFill } from "react-icons/ri"
 import { Task } from "@/features/types";
 import {useTodoStore} from "@/features/state";
@@ -43,8 +45,16 @@ export function TaskInput(props: ITaskCard) {
 
   return (
     <ClickAwayListener onClickAway={handleClickAway}>
-      <div className={"grid grid-cols-[30px_auto] px-5 rounded-md " + (focused ? "border border-gray-200 shadow-md my-8 py-4" : "")}>
-        <label className="py-1">
+      <motion.div
+        initial="closed"
+        animate={focused ? "focused" : "closed"}
+        className={"grid grid-cols-[30px_auto] px-5 rounded-md " + (focused ? "border border-gray-200 shadow-md" : "")}
+        variants={{
+          focused: { paddingTop: '1rem', paddingBottom: '1rem', marginTop: '2rem', marginBottom: '2rem' },
+          closed: { }
+        }}
+      >
+        <motion.label className="py-1">
           <input
             className="truncate"
             type="checkbox"
@@ -52,8 +62,8 @@ export function TaskInput(props: ITaskCard) {
             checked={task.done}
             onChange={handleCompletionChange}
           />
-        </label>
-        <label htmlFor="task-id" className="inline-block">
+        </motion.label>
+        <motion.label htmlFor="task-id" className="inline-block">
           <input
             autoFocus={props.autoFocus}
             onFocus={handleFocus}
@@ -63,43 +73,67 @@ export function TaskInput(props: ITaskCard) {
             onChange={handleTitleChange}
             className="flex-1 w-full rounded-lg inline-block focus:outline-none truncate py-1"
           />
-        </label>
-        <div />
-        {focused
-          ? (
-            <div>
-              <textarea
-                onFocus={handleFocus}
-                value={task.notes}
-                placeholder="Notes"
-                onChange={handleNotesChange}
-                className="flex-1 w-full py-2 rounded-lg focus:outline-none"
-              />
-              <div className="flex items-center">
-                <ul className="">
-                  {props.task.tags.map(tag => (
-                    <li className="bg-green-300 text-sm text-green-700 font-medium px-2 mr-1 rounded-xl items-center inline-block" key={tag}>
-                      <span>{tag}</span>
-                      <button onClick={() => removeTag(task.id, tag)} className="inline-block pl-1"><RiCloseCircleFill className="inline-block" /></button>
-                    </li>
-                  ))}
-                  <li className="text-sm px-2 mr-1 rounded-xl items-center inline-flex">
-                    <GoTag />
-                    <TaskTagPicker task={task} />
-                  </li>
-                </ul>
-              </div>
-            </div>
-          )
-          : (
-            <ul className="">
-              {props.task.tags.map(tag => (
-                <li className="text-sm font-medium text-stone-500 border-stone-500 border px-2 mr-1 rounded-xl mb-2 inline-block" key={tag}>{tag}</li>
-              ))}
-            </ul>
-          )
-        }
-      </div>
+        </motion.label>
+
+        <motion.div />
+
+        <motion.div>
+          <motion.textarea
+            variants={{
+              focused: { opacity: 1, height: 80, paddingTop: '0.5rem' },
+              closed: { opacity: 0, height: 0 }
+            }}
+            onFocus={handleFocus}
+            value={task.notes}
+            placeholder="Notes"
+            onChange={handleNotesChange}
+            className="block flex-1 w-full rounded-lg leading-snug focus:outline-none"
+          />
+          <motion.ul className="">
+            {props.task.tags.map(tag => (
+              <motion.li
+                className="text-sm font-medium px-2 mr-1 rounded-xl items-center inline-flex"
+                key={tag}
+                variants={{
+                  focused: {
+                    backgroundColor: colors.green[300],
+                    borderColor: 'rgba(0,0,0,0)',
+                    borderWidth: 1,
+                    color: colors.green[700],
+                    fontWeight: 500,
+                    marginBottom: 0
+                  },
+                  closed: {
+                    borderColor: colors.stone[500],
+                    borderWidth: 1,
+                    color: colors.stone[500],
+                    fontWeight: 100,
+                    marginBottom: '1rem'
+                  }
+                }}
+              >
+                <span>{tag}</span>
+                <motion.button
+                  onClick={() => removeTag(task.id, tag)}
+                  className="inline-flex pl-1"
+                  variants={{
+                    focused: { width: 16 },
+                    closed: { width: 0 },
+                  }}
+                >
+                  <RiCloseCircleFill className="inline-block" />
+                </motion.button>
+              </motion.li>
+            ))}
+            {focused && (
+              <motion.li className="text-sm px-2 mr-1 rounded-xl items-center inline-flex">
+                <GoTag />
+                <TaskTagPicker task={task} />
+              </motion.li>
+            )}
+          </motion.ul>
+        </motion.div>
+      </motion.div>
     </ClickAwayListener>
   );
 };
