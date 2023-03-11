@@ -1,7 +1,8 @@
 import React, {useState} from "react";
+import cx from "classnames";
 import colors from "tailwindcss/colors";
 import ClickAwayListener from 'react-click-away-listener';
-import { motion } from 'framer-motion';
+import {motion} from 'framer-motion';
 import { GoTag } from "react-icons/go";
 import { RiCloseCircleFill } from "react-icons/ri"
 import { Task } from "@/features/types";
@@ -49,7 +50,7 @@ export function TaskInput(props: ITaskCard) {
       <motion.div
         initial="closed"
         animate={focused ? "focused" : "closed"}
-        className={"grid grid-cols-[30px_auto] px-5 rounded-md " + (focused ? "border border-gray-200 shadow-md" : "")}
+        className={"bg-white grid grid-cols-[30px_auto] px-5 rounded-md " + (focused ? "border border-gray-200 shadow-md" : "") + (task.done ? "opacity-50" : "")}
         variants={{
           focused: { paddingTop: '1rem', paddingBottom: '1rem', marginTop: '2rem', marginBottom: '2rem' },
           closed: { }
@@ -72,7 +73,7 @@ export function TaskInput(props: ITaskCard) {
             value={task.name}
             placeholder="New To Do"
             onChange={handleTitleChange}
-            className="flex-1 w-full rounded-lg inline-block focus:outline-none truncate py-1"
+            className={"flex-1 w-full rounded-lg inline-block focus:outline-none truncate py-1"}
           />
         </motion.label>
 

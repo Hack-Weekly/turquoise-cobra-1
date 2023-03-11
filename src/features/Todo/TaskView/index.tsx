@@ -1,5 +1,5 @@
 import React, {useEffect, useMemo, useRef, useState} from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import {motion, AnimatePresence, Reorder} from "framer-motion";
 import cx from "classnames";
 import TaskCard from "@/features/Todo/TaskCard";
 import {getTags, useTodoStore} from "@/features/state";
@@ -7,7 +7,7 @@ import {getTags, useTodoStore} from "@/features/state";
 export function TaskView() {
   const [selectedTag, setSelectedTag] = useState<string>("")
 
-  const tasks = useTodoStore(state => Object.values(state.tasks))
+  const tasks = useTodoStore(state => Object.values(state.tasks).sort((a, b) => a.done === b.done ? 0 : (a.done ? 1 : -1)))
   const tags = useTodoStore(state => getTags(state))
   const addTask = useTodoStore(state => state.addTask)
 
@@ -83,21 +83,30 @@ export function TaskView() {
           </div>
         ) : (
           <section className="flex flex-col">
-            <AnimatePresence>
-              {filteredTasks.map((task, index) => (
-                <motion.div
-                  key={task.id}
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                >
-                  <TaskCard
-                    autoFocus={filteredTasks.length == (index + 1) && prevTagRef.current === selectedTag && renderCount.current > 0}
-                    task={task}
-                  />
-                </motion.div>
-              ))}
-            </AnimatePresence>
+            <Reorder.Group
+              as="ul"
+              axis="y"
+              onReorder={console.log}
+              values={filteredTasks}
+            >
+              <AnimatePresence>
+                {filteredTasks.map((task, index) => (
+                  <Reorder.Item id={task.id} key={task.id} value={task} dragListener={false}>
+                    <motion.div
+                      className={(task.done && (index === 0 || !filteredTasks[index - 1].done)) ? "mt-24" : ""}
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                    >
+                      <TaskCard
+                        autoFocus={filteredTasks.length == (index + 1) && prevTagRef.current === selectedTag && renderCount.current > 0}
+                        task={task}
+                      />
+                    </motion.div>
+                  </Reorder.Item>
+                ))}
+              </AnimatePresence>
+            </Reorder.Group>
           </section>
         )}
       </div>
