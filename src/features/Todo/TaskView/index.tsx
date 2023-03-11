@@ -38,7 +38,9 @@ export function TaskView() {
   return (
     <div className="max-w-[800px] mx-auto w-full justify-center">
       <div className="h-fit mx-auto">
-        <h1 className="text-2xl text-center my-10">Cobra Tasks</h1>
+        <h1 className="text-4xl font-medium font-serif text-center my-10">
+          Cobra Tasks
+        </h1>
         <div className="mb-4">
           <div className="mb-8">
             <button
@@ -50,11 +52,11 @@ export function TaskView() {
             </button>
           </div>
           <div className="mb-8">
-            <div className="font-medium text-sm px-2 mr-1 rounded-xl items-center">
+            <div className="font-medium text-sm px-2 mr-1 rounded-xl space-x-2 items-center">
               <button
                 className={cx(
                   selectedTag === "" && "bg-slate-300",
-                  "border-2 border-transparent hover:border-slate-300 px-2 rounded-xl inline-block"
+                  "border-2 border-transparent hover:border-slate-300 px-2 py-1 rounded-xl inline-block"
                 )}
                 onClick={() => setSelectedTag("")}
               >
@@ -66,7 +68,7 @@ export function TaskView() {
                     key={tag}
                     className={cx(
                       selectedTag === tag && "bg-slate-300",
-                      "border-2 border-transparent hover:border-slate-300 px-2 rounded-xl inline-block"
+                      "border-2 border-transparent hover:border-slate-300 px-2 py-1 rounded-xl inline-block"
                     )}
                     onClick={() => setSelectedTag(tag)}
                     initial={{ opacity: 0, width: 0 }}
@@ -83,7 +85,7 @@ export function TaskView() {
       </div>
       <div className="">
         {tasks.length == 0 ? (
-          <div className="text-gray-300 text-center">
+          <div className="text-gray-400 text-center">
             <h1>It seems empty here. Try adding new Tasks</h1>
           </div>
         ) : (
