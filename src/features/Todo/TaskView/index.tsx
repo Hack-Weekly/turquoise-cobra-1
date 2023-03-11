@@ -10,6 +10,7 @@ export function TaskView() {
   const tasks = useTodoStore(state => Object.values(state.tasks).sort((a, b) => a.done === b.done ? 0 : (a.done ? 1 : -1)))
   const tags = useTodoStore(state => getTags(state))
   const addTask = useTodoStore(state => state.addTask)
+  const removeCompletedTasks = useTodoStore(state => state.removeCompletedTasks)
 
   const filteredTasks = useMemo(
     () => {
@@ -23,6 +24,9 @@ export function TaskView() {
   )
   const addTaskWithSelectedTag = () => {
     selectedTag != "" ? addTask([selectedTag]) : addTask()
+  }
+  const removeCompletedTasksWithTag = () => {
+    selectedTag != "" ? removeCompletedTasks(selectedTag) : removeCompletedTasks()
   }
 
   // we should only auto-focus when a new task is created (i.e. not when new tag is selected)
@@ -38,12 +42,20 @@ export function TaskView() {
       <div className="h-fit mx-auto">
         <h1 className="text-2xl text-center my-10">Cobra Tasks</h1>
         <div className="mb-4">
-          <button
-            onClick={addTaskWithSelectedTag}
-            className="w-28 mb-4 mx-auto h-10 border-2 rounded-xl"
-          >
-            Add task
-          </button>
+          <div className="flex justify-between">
+            <button
+              onClick={addTaskWithSelectedTag}
+              className="w-28 mb-4 h-10 border-2 rounded-xl hover:bg-slate-300"
+            >
+              Add task
+            </button>
+            <button
+              onClick={removeCompletedTasksWithTag}
+              className="px-4 h-10 text-red-500 hover:bg-red-100 active:bg-red-200 px-2 rounded-lg"
+            >
+              Delete Completed Tasks
+            </button>
+          </div>
           <div className="mb-8">
             <div className="font-medium text-sm px-2 mr-1 rounded-xl items-center">
               <button

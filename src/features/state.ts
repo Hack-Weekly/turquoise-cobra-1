@@ -8,6 +8,7 @@ interface TodoState {
   addTask: (tags?: string[], id?: string) => void
   addTag: (id: string, tag: string) => void
   removeTask: (id: string) => void
+  removeCompletedTasks: (id?: string) => void
   removeTag: (id: string, tag: string) => void
   editName: (id: string, name: string) => void
   editNotes: (id: string, notes: string) => void
@@ -51,6 +52,18 @@ export const useTodoStore = create<TodoState>()(
       removeTask: (id) => set((state) => {
         const tasks = { ...state.tasks }
         delete tasks[id]
+
+        return { tasks }
+      }),
+      removeCompletedTasks: (tag: string = '') => set((state) => {
+        const tasks = { ...state.tasks }
+        const keys = Object.keys(tasks)
+        for (let key of keys) {
+          const task = tasks[key]
+          if (task.done && (tag === '' || task.tags.indexOf(tag) !== -1)) {
+            delete tasks[key]
+          }
+        }
 
         return { tasks }
       }),
