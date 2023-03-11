@@ -1,49 +1,54 @@
-import React, {useEffect, useMemo, useRef, useState} from "react";
-import {motion, AnimatePresence, Reorder} from "framer-motion";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { motion, AnimatePresence, Reorder } from "framer-motion";
 import cx from "classnames";
 import TaskCard from "@/features/Todo/TaskCard";
-import {getTags, useTodoStore} from "@/features/state";
+import { getTags, useTodoStore } from "@/features/state";
+import { IoAdd } from "react-icons/io5";
 
 export function TaskView() {
-  const [selectedTag, setSelectedTag] = useState<string>("")
+  const [selectedTag, setSelectedTag] = useState<string>("");
 
-  const tasks = useTodoStore(state => Object.values(state.tasks).sort((a, b) => a.done === b.done ? 0 : (a.done ? 1 : -1)))
-  const tags = useTodoStore(state => getTags(state))
-  const addTask = useTodoStore(state => state.addTask)
+  const tasks = useTodoStore((state) =>
+    Object.values(state.tasks).sort((a, b) =>
+      a.done === b.done ? 0 : a.done ? 1 : -1
+    )
+  );
+  const tags = useTodoStore((state) => getTags(state));
+  const addTask = useTodoStore((state) => state.addTask);
 
-  const filteredTasks = useMemo(
-    () => {
-      if (selectedTag) {
-        return tasks.filter(task => task.tags.indexOf(selectedTag) !== -1)
-      } else {
-        return tasks
-      }
-    },
-    [tasks, selectedTag]
-  )
+  const filteredTasks = useMemo(() => {
+    if (selectedTag) {
+      return tasks.filter((task) => task.tags.indexOf(selectedTag) !== -1);
+    } else {
+      return tasks;
+    }
+  }, [tasks, selectedTag]);
   const addTaskWithSelectedTag = () => {
-    selectedTag != "" ? addTask([selectedTag]) : addTask()
-  }
+    selectedTag != "" ? addTask([selectedTag]) : addTask();
+  };
 
   // we should only auto-focus when a new task is created (i.e. not when new tag is selected)
-  const prevTagRef = useRef<string>("")
-  const renderCount = useRef<number>(0)
+  const prevTagRef = useRef<string>("");
+  const renderCount = useRef<number>(0);
   useEffect(() => {
-    prevTagRef.current = selectedTag
-    renderCount.current++
-  }, [selectedTag])
+    prevTagRef.current = selectedTag;
+    renderCount.current++;
+  }, [selectedTag]);
 
   return (
     <div className="max-w-[800px] mx-auto w-full justify-center">
       <div className="h-fit mx-auto">
         <h1 className="text-2xl text-center my-10">Cobra Tasks</h1>
         <div className="mb-4">
-          <button
-            onClick={addTaskWithSelectedTag}
-            className="w-28 mb-4 mx-auto h-10 border-2 rounded-xl"
-          >
-            Add task
-          </button>
+          <div className="mb-8">
+            <button
+              onClick={addTaskWithSelectedTag}
+              className="w-10 h-10 border-2 border-gray-500 hover:border-0 hover:text-white group flex items-center font-semibold 
+              justify-center rounded-full hover:bg-add hover:w-28 hover:scale-110 hover:shadow-lg duration-200 hover:after:content-['AddTask']"
+            >
+              <IoAdd className="text-3xl group-hover:text-2xl" />
+            </button>
+          </div>
           <div className="mb-8">
             <div className="font-medium text-sm px-2 mr-1 rounded-xl items-center">
               <button
@@ -56,7 +61,7 @@ export function TaskView() {
                 All
               </button>
               <AnimatePresence>
-                {tags.map(tag => (
+                {tags.map((tag) => (
                   <motion.button
                     key={tag}
                     className={cx(
@@ -91,26 +96,37 @@ export function TaskView() {
             >
               <AnimatePresence>
                 {filteredTasks.map((task, index) => {
-                  const isNewTask = (filteredTasks.length == (index + 1) || (!task.done && filteredTasks[index + 1].done)) && prevTagRef.current === selectedTag && renderCount.current > 0
+                  const isNewTask =
+                    (filteredTasks.length == index + 1 ||
+                      (!task.done && filteredTasks[index + 1].done)) &&
+                    prevTagRef.current === selectedTag &&
+                    renderCount.current > 0;
 
                   return (
-                    <Reorder.Item id={task.id} key={task.id} value={task} dragListener={false}>
+                    <Reorder.Item
+                      id={task.id}
+                      key={task.id}
+                      value={task}
+                      dragListener={false}
+                    >
                       <motion.div
-                        className={(task.done && (index === 0 || !filteredTasks[index - 1].done)) ? "mt-24" : ""}
+                        className={
+                          task.done &&
+                          (index === 0 || !filteredTasks[index - 1].done)
+                            ? "mt-24"
+                            : ""
+                        }
                         initial={{
                           opacity: 0,
-                          height: isNewTask ? "auto" : 0
+                          height: isNewTask ? "auto" : 0,
                         }}
-                        animate={{opacity: 1, height: "auto"}}
+                        animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0 }}
                       >
-                        <TaskCard
-                          autoFocus={isNewTask}
-                          task={task}
-                        />
+                        <TaskCard autoFocus={isNewTask} task={task} />
                       </motion.div>
                     </Reorder.Item>
-                  )
+                  );
                 })}
               </AnimatePresence>
             </Reorder.Group>
