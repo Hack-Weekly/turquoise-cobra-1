@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { nanoid } from 'nanoid';
 import { Task } from "@/features/types";
+import {memoize} from "proxy-memoize";
 
 interface TodoState {
   tasks: { [id:string]: Task }
@@ -30,6 +31,8 @@ export const getTags = (state: TodoState, exceptTask: Task | null = null) => {
   }
   return Array.from(tagsSet)
 }
+
+export const getTasks = memoize((state: TodoState) => Object.values(state.tasks).sort((a, b) => a.done === b.done ? 0 : (a.done ? 1 : -1)))
 
 // TODO: should have used immer
 export const useTodoStore = create<TodoState>()(

@@ -2,12 +2,22 @@ import React, {useEffect, useMemo, useRef, useState} from "react";
 import {motion, AnimatePresence, Reorder} from "framer-motion";
 import cx from "classnames";
 import TaskCard from "@/features/Todo/TaskCard";
-import {getTags, useTodoStore} from "@/features/state";
+import {getTags, getTasks, useTodoStore} from "@/features/state";
+import ConfettiExplosion, {ConfettiProps} from "react-confetti-explosion";
+import {nanoid} from "nanoid";
+import { memoize } from 'proxy-memoize';
+
+const smallProps: ConfettiProps = {
+  force: 0.4,
+  duration: 2200,
+  particleCount: 30,
+  width: 400,
+}
 
 export function TaskView() {
   const [selectedTag, setSelectedTag] = useState<string>("")
 
-  const tasks = useTodoStore(state => Object.values(state.tasks).sort((a, b) => a.done === b.done ? 0 : (a.done ? 1 : -1)))
+  const tasks = useTodoStore(getTasks)
   const tags = useTodoStore(state => getTags(state))
   const addTask = useTodoStore(state => state.addTask)
   const removeCompletedTasks = useTodoStore(state => state.removeCompletedTasks)
@@ -31,11 +41,22 @@ export function TaskView() {
 
   // we should only auto-focus when a new task is created (i.e. not when new tag is selected)
   const prevTagRef = useRef<string>("")
+  const prevPendingLenRef = useRef<number>(0)
   const renderCount = useRef<number>(0)
+  const [explosions, setExplosions] = useState<string[]>([])
   useEffect(() => {
-    prevTagRef.current = selectedTag
+    const pendingLen = filteredTasks.filter(t => !t.done).length
+    // add a 'confetti' whenever there's no more tasks (don't trigger when tag changed)
+    if (renderCount.current > 2 && prevTagRef.current === selectedTag && prevPendingLenRef.current !== pendingLen) {
+      if (filteredTasks.length > 0 && filteredTasks.every(task => task.done)) {
+        setExplosions([...explosions, nanoid()])
+      }
+    }
+
     renderCount.current++
-  }, [selectedTag])
+    prevTagRef.current = selectedTag
+    prevPendingLenRef.current = pendingLen
+  }, [selectedTag, filteredTasks])
 
   return (
     <div className="max-w-[800px] mx-auto w-full justify-center">
@@ -89,45 +110,48 @@ export function TaskView() {
         </div>
       </div>
       <div className="">
-        {tasks.length == 0 ? (
-          <div className="text-gray-300 text-center">
-            <h1>It seems empty here. Try adding new Tasks</h1>
-          </div>
-        ) : (
-          <section className="flex flex-col">
-            <Reorder.Group
-              as="ul"
-              axis="y"
-              onReorder={console.log}
-              values={filteredTasks}
-            >
-              <AnimatePresence>
-                {filteredTasks.map((task, index) => {
-                  const isNewTask = (filteredTasks.length == (index + 1) || (!task.done && filteredTasks[index + 1].done)) && prevTagRef.current === selectedTag && renderCount.current > 0
+        {explosions.map(e => (<div key={e} className="mx-auto"><ConfettiExplosion className="w-2 mx-auto" {...smallProps} /></div>))}
+        <section className="flex flex-col">
+          <Reorder.Group
+            as="ul"
+            axis="y"
+            onReorder={console.log}
+            values={filteredTasks}
+          >
+            <AnimatePresence>
+              {tasks.length == 0
+                ? (
+                  <div className="text-gray-300 text-center">
+                    <h1>It seems empty here. Try adding new Tasks</h1>
+                  </div>
+                )
+                : (
+                  filteredTasks.map((task, index) => {
+                    const isNewTask = (filteredTasks.length == (index + 1) || (!task.done && filteredTasks[index + 1].done)) && prevTagRef.current === selectedTag && renderCount.current > 0
 
-                  return (
-                    <Reorder.Item id={task.id} key={task.id} value={task} dragListener={false}>
-                      <motion.div
-                        className={(task.done && (index === 0 || !filteredTasks[index - 1].done)) ? "mt-24" : ""}
-                        initial={{
-                          opacity: 0,
-                          height: isNewTask ? "auto" : 0
-                        }}
-                        animate={{opacity: 1, height: "auto"}}
-                        exit={{ opacity: 0 }}
-                      >
-                        <TaskCard
-                          autoFocus={isNewTask}
-                          task={task}
-                        />
-                      </motion.div>
-                    </Reorder.Item>
-                  )
-                })}
-              </AnimatePresence>
-            </Reorder.Group>
-          </section>
-        )}
+                    return (
+                      <Reorder.Item id={task.id} key={task.id} value={task} dragListener={false}>
+                        <motion.div
+                          className={(task.done && (index === 0 || !filteredTasks[index - 1].done)) ? "mt-24" : ""}
+                          initial={{
+                            opacity: 0,
+                            height: isNewTask ? "auto" : 0
+                          }}
+                          animate={{opacity: 1, height: "auto"}}
+                          exit={{ opacity: 0 }}
+                        >
+                          <TaskCard
+                            autoFocus={isNewTask}
+                            task={task}
+                          />
+                        </motion.div>
+                      </Reorder.Item>
+                    )
+                  })
+                )}
+            </AnimatePresence>
+          </Reorder.Group>
+        </section>
       </div>
     </div>
   );
