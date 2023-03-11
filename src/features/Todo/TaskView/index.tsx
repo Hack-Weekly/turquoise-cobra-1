@@ -1,6 +1,7 @@
 import React, {useEffect, useMemo, useRef, useState} from "react";
-import TaskCard from "@/features/Todo/TaskCard";
+import { motion, AnimatePresence } from "framer-motion";
 import cx from "classnames";
+import TaskCard from "@/features/Todo/TaskCard";
 import {getTags, useTodoStore} from "@/features/state";
 
 export function TaskView() {
@@ -54,18 +55,23 @@ export function TaskView() {
               >
                 All
               </button>
-              {tags.map(tag => (
-                <button
-                  key={tag}
-                  className={cx(
-                    selectedTag === tag && "bg-slate-300",
-                    "border-2 border-transparent hover:border-slate-300 px-2 rounded-xl inline-block"
-                  )}
-                  onClick={() => setSelectedTag(tag)}
-                >
-                  {tag}
-                </button>
-              ))}
+              <AnimatePresence>
+                {tags.map(tag => (
+                  <motion.button
+                    key={tag}
+                    className={cx(
+                      selectedTag === tag && "bg-slate-300",
+                      "border-2 border-transparent hover:border-slate-300 px-2 rounded-xl inline-block"
+                    )}
+                    onClick={() => setSelectedTag(tag)}
+                    initial={{ opacity: 0, width: 0 }}
+                    animate={{ opacity: 1, width: "auto" }}
+                    exit={{ opacity: 0, width: 0 }}
+                  >
+                    {tag}
+                  </motion.button>
+                ))}
+              </AnimatePresence>
             </div>
           </div>
         </div>
@@ -77,13 +83,21 @@ export function TaskView() {
           </div>
         ) : (
           <section className="flex flex-col">
-            {filteredTasks.map((task, index) => (
-              <TaskCard
-                autoFocus={filteredTasks.length == (index + 1) && prevTagRef.current === selectedTag && renderCount.current > 0}
-                key={task.id}
-                task={task}
-              />
-            ))}
+            <AnimatePresence>
+              {filteredTasks.map((task, index) => (
+                <motion.div
+                  key={task.id}
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                >
+                  <TaskCard
+                    autoFocus={filteredTasks.length == (index + 1) && prevTagRef.current === selectedTag && renderCount.current > 0}
+                    task={task}
+                  />
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </section>
         )}
       </div>
