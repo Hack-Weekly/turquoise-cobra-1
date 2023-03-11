@@ -16,6 +16,7 @@ export type ITaskCard = {
 export function TaskInput(props: ITaskCard) {
   const { task } = props
   const [focused, setFocus] = useState<boolean>(false);
+  const removeTask = useTodoStore(state => state.removeTask)
   const editName = useTodoStore(state => state.editName)
   const editNotes = useTodoStore(state => state.editNotes)
   const markCompletion = useTodoStore(state => state.markCompletion)
@@ -89,49 +90,59 @@ export function TaskInput(props: ITaskCard) {
             onChange={handleNotesChange}
             className="block flex-1 w-full rounded-lg leading-snug focus:outline-none"
           />
-          <motion.ul className="">
-            {props.task.tags.map(tag => (
-              <motion.li
-                className="text-sm font-medium px-2 mr-1 rounded-xl items-center inline-flex"
-                key={tag}
-                variants={{
-                  focused: {
-                    backgroundColor: colors.green[300],
-                    borderColor: 'rgba(0,0,0,0)',
-                    borderWidth: 1,
-                    color: colors.green[700],
-                    fontWeight: 500,
-                    marginBottom: 0
-                  },
-                  closed: {
-                    borderColor: colors.stone[500],
-                    borderWidth: 1,
-                    color: colors.stone[500],
-                    fontWeight: 100,
-                    marginBottom: '1rem'
-                  }
-                }}
-              >
-                <span>{tag}</span>
-                <motion.button
-                  onClick={() => removeTag(task.id, tag)}
-                  className="inline-flex pl-1"
+          <motion.div className="grid grid-cols-[auto_80px]">
+            <motion.ul className="">
+              {props.task.tags.map(tag => (
+                <motion.li
+                  className="text-sm font-medium px-2 mr-1 rounded-xl items-center inline-flex"
+                  key={tag}
                   variants={{
-                    focused: { width: 16 },
-                    closed: { width: 0 },
+                    focused: {
+                      backgroundColor: colors.green[300],
+                      borderColor: 'rgba(0,0,0,0)',
+                      borderWidth: 1,
+                      color: colors.green[700],
+                      fontWeight: 500,
+                      marginBottom: 0
+                    },
+                    closed: {
+                      borderColor: colors.stone[500],
+                      borderWidth: 1,
+                      color: colors.stone[500],
+                      fontWeight: 100,
+                      marginBottom: '1rem'
+                    }
                   }}
                 >
-                  <RiCloseCircleFill className="inline-block" />
-                </motion.button>
-              </motion.li>
-            ))}
+                  <span>{tag}</span>
+                  <motion.button
+                    onClick={() => removeTag(task.id, tag)}
+                    className="inline-flex pl-1"
+                    variants={{
+                      focused: { width: 16 },
+                      closed: { width: 0 },
+                    }}
+                  >
+                    <RiCloseCircleFill className="inline-block" />
+                  </motion.button>
+                </motion.li>
+              ))}
+              {focused && (
+                <motion.li className="text-sm px-2 mr-1 rounded-xl items-center inline-flex">
+                  <GoTag />
+                  <TaskTagPicker task={task} />
+                </motion.li>
+              )}
+            </motion.ul>
             {focused && (
-              <motion.li className="text-sm px-2 mr-1 rounded-xl items-center inline-flex">
-                <GoTag />
-                <TaskTagPicker task={task} />
-              </motion.li>
+              <motion.button
+                onClick={() => removeTask(task.id)}
+                className="text-sm text-red-500 hover:bg-red-100 active:bg-red-200 px-2 rounded-lg"
+              >
+                Delete
+              </motion.button>
             )}
-          </motion.ul>
+          </motion.div>
         </motion.div>
       </motion.div>
     </ClickAwayListener>

@@ -7,6 +7,7 @@ interface TodoState {
   tasks: { [id:string]: Task }
   addTask: (tags?: string[], id?: string) => void
   addTag: (id: string, tag: string) => void
+  removeTask: (id: string) => void
   removeTag: (id: string, tag: string) => void
   editName: (id: string, name: string) => void
   editNotes: (id: string, notes: string) => void
@@ -47,6 +48,12 @@ export const useTodoStore = create<TodoState>()(
           }
         }
       })),
+      removeTask: (id) => set((state) => {
+        const tasks = { ...state.tasks }
+        delete tasks[id]
+
+        return { tasks }
+      }),
       addTag: (id, tag) => set((state) => ({
         tasks: {
           ...state.tasks,
