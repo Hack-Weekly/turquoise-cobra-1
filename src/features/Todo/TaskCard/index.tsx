@@ -1,5 +1,4 @@
 import React, {useState} from "react";
-import cx from "classnames";
 import colors from "tailwindcss/colors";
 import ClickAwayListener from 'react-click-away-listener';
 import {motion} from 'framer-motion';
