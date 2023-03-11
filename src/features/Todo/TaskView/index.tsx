@@ -26,8 +26,10 @@ export function TaskView() {
 
   // we should only auto-focus when a new task is created (i.e. not when new tag is selected)
   const prevTagRef = useRef<string>("")
+  const renderCount = useRef<number>(0)
   useEffect(() => {
     prevTagRef.current = selectedTag
+    renderCount.current++
   }, [selectedTag])
 
   return (
@@ -77,7 +79,7 @@ export function TaskView() {
           <section className="flex flex-col">
             {filteredTasks.map((task, index) => (
               <TaskCard
-                autoFocus={filteredTasks.length == (index + 1) && prevTagRef.current === selectedTag}
+                autoFocus={filteredTasks.length == (index + 1) && prevTagRef.current === selectedTag && renderCount.current > 0}
                 key={task.id}
                 task={task}
               />
